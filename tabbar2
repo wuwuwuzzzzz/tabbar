@@ -1,0 +1,107 @@
+<template>
+  <view class="tabbar">
+    <view class="navigator">
+      <view class="navigator-item" v-for="(item,index) in tabBar.list" :key="item.pagePath"
+            @click="switchTab(item,index)">
+        <img :src="item.iconPath" class="icon" v-if="selectedIndex !== index">
+        <img :src="item.selectedIconPath" class="icon" v-else>
+        <text :class="['item-text',{'text-active':selectedIndex === index}]">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      selectedIndex: uni.getStorageSync('selectedIndex') || 0,
+      tabBar: {
+        list: [{
+          "pagePath": "pages/work/patient/index",
+          "iconPath": "static/images/tabbar/patient.png",
+          "selectedIconPath": "/static/images/tabbar/patient_.png",
+          "text": "病人"
+        }, {
+          "pagePath": "pages/work/check/index",
+          "iconPath": "static/images/tabbar/check.png",
+          "selectedIconPath": "/static/images/tabbar/check_.png",
+          "text": "检查"
+        }, {
+          "pagePath": "pages/work/operation/index",
+          "iconPath": "static/images/tabbar/operation.png",
+          "selectedIconPath": "/static/images/tabbar/operation_.png",
+          "text": "手术"
+        }, {
+          "pagePath": "pages/mine/index",
+          "iconPath": "static/images/tabbar/user.png",
+          "selectedIconPath": "/static/images/tabbar/user_.png",
+          "text": "我的"
+        }]
+      },
+    }
+  },
+  created() {
+    // 清除缓存
+    uni.removeStorageSync('selectedIndex');
+    uni.hideTabBar();
+  },
+  methods: {
+    switchTab(item, index) {
+      let url = '/' + item.pagePath
+      let pagePath = url
+      console.log(item)
+      uni.switchTab({url})
+      this.tabBar.list.forEach((v, i) => {
+        if (item.pagePath === v.pagePath) {
+          uni.setStorageSync('selectedIndex', index);
+        }
+      })
+    }
+  },
+}
+</script>
+
+<style>
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100rpx;
+  z-index: 999;
+  background: #F5F5F5;
+  border-top: 2rpx solid #eee;
+}
+
+.navigator {
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  margin: 0 auto;
+  padding: 20rpx;
+}
+
+.navigator-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 50rpx;
+  height: 100%;
+}
+
+.item-text {
+  margin-top: 6rpx;
+  color: #777E86;
+  font-size: 24rpx;
+}
+
+.text-active {
+  color: #2E92FD !important;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+</style>
